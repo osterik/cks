@@ -1,5 +1,8 @@
 .ONESHELL:
 
+# enable Terragrunt Provider Cache Server to reduce disk space usage
+export TG_PROVIDER_CACHE := 1
+
 prefix_dir="${USER_ID}_${ENV_ID}_"
 terragrunt_variables_file := $(firstword $(wildcard terraform/environments/variables.hcl) terraform/environments/variables.example.hcl)
 region := $(shell grep '^  backend_region' $(terragrunt_variables_file) | awk -F '=' '{gsub(/ /, "", $$2); print $$2}' | tr -d '"')
