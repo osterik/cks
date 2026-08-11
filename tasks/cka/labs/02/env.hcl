@@ -3,7 +3,6 @@ locals {
   solutions_scripts="https://github.com/ViktorUJ/cks/blob/master/tasks/cka/labs/02/worker/files/solutions/1.MD"
   solutions_video="xyz"
   debug_output   = "false"
-  region = "eu-north-1"
   vpc_default_cidr =  "10.2.0.0/16"
   az_ids = {
     "10.2.0.0/19"  = "eun1-az3"

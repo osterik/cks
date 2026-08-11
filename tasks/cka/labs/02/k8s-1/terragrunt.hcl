@@ -26,7 +26,6 @@ dependency "ssh-keys" {
 
 inputs = {
   questions_list      = local.vars.locals.questions_list
-  region              = local.vars.locals.region
   aws                 = local.vars.locals.aws
   prefix              = "cluster1"
   tags_common         = local.vars.locals.tags

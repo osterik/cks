@@ -52,7 +52,7 @@ remote_state {
   }
 }
 inputs = {
-  region                 = local.backend_region
+  region                 = local.region
   backend_bucket         = local.backend_bucket
   backend_dynamodb_table = local.backend_dynamodb_table
 }
