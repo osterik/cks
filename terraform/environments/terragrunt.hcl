@@ -1,8 +1,11 @@
 locals {
-  region                 = "eu-north-1"
-  backend_region         = "eu-north-1"
-  backend_bucket         = "sre-learning-platform-state-backet"
-  backend_dynamodb_table = "${local.backend_bucket}-lock"
+  # TODO: update the docs
+  variables_file         = fileexists("${get_terragrunt_dir()}/variables.hcl") ? "${get_terragrunt_dir()}/variables.hcl" : "${get_terragrunt_dir()}/variables.example.hcl"
+  environment            = read_terragrunt_config(local.variables_file)
+  region                 = local.environment.locals.region
+  backend_region         = local.environment.locals.backend_region
+  backend_bucket         = local.environment.locals.backend_bucket
+  backend_dynamodb_table = local.environment.locals.backend_dynamodb_table
 }
 
 generate "backend" {

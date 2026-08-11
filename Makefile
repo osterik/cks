@@ -1,8 +1,9 @@
 .ONESHELL:
 
 prefix_dir="${USER_ID}_${ENV_ID}_"
-region := $(shell grep 'backend_region' terraform/environments/terragrunt.hcl |grep -v 'local.'| awk -F '"' '{print $$2}')
-backend_bucket := $(shell grep '^  backend_bucket' terraform/environments/terragrunt.hcl | awk -F '=' '{gsub(/ /, "", $$2); print $$2}' | tr -d '"')
+terragrunt_variables_file := $(firstword $(wildcard terraform/environments/variables.hcl) terraform/environments/variables.example.hcl)
+region := $(shell grep '^  backend_region' $(terragrunt_variables_file) | awk -F '=' '{gsub(/ /, "", $$2); print $$2}' | tr -d '"')
+backend_bucket := $(shell grep '^  backend_bucket' $(terragrunt_variables_file) | awk -F '=' '{gsub(/ /, "", $$2); print $$2}' | tr -d '"')
 dynamodb_table := $(backend_bucket)-lock
 base_dir := $(shell pwd)
 nproc := $(shell if [ "$(shell uname)" = "Darwin" ]; then sysctl -n hw.physicalcpu; else nproc; fi)
