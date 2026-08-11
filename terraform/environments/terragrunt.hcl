@@ -1,6 +1,8 @@
 locals {
   # TODO: update the docs
-  variables_file         = fileexists("${get_terragrunt_dir()}/variables.hcl") ? "${get_terragrunt_dir()}/variables.hcl" : "${get_terragrunt_dir()}/variables.example.hcl"
+  # Resolve from the parent environment directory when this config is included by a child module.
+  variables_directory    = dirname(find_in_parent_folders("variables.example.hcl"))
+  variables_file         = fileexists("${local.variables_directory}/variables.hcl") ? "${local.variables_directory}/variables.hcl" : "${local.variables_directory}/variables.example.hcl"
   environment            = read_terragrunt_config(local.variables_file)
   region                 = local.environment.locals.region
   backend_region         = local.environment.locals.backend_region
