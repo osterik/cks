@@ -1,6 +1,7 @@
 variable "region" {}
 variable "az_ids" {
-  type = map(string)
+  description = "Map of subnet CIDRs to zero-based available-zone indexes or explicit AWS availability-zone IDs"
+  type        = map(string)
 }
 
 variable "vpc_default_cidr" {}

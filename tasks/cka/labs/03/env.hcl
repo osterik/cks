@@ -3,11 +3,10 @@ locals {
   solutions_scripts="https://github.com/ViktorUJ/cks/blob/master/tasks/cka/labs/03/worker/files/solutions/1.MD"
   solutions_video="https://youtu.be/1-qA7RjSx4A"
   debug_output   = "false"
-  region = "eu-north-1"
   vpc_default_cidr =  "10.2.0.0/16"
-  az_ids = {
-    "10.2.0.0/19"  = "eun1-az3"
-    "10.2.32.0/19" = "eun1-az2"
+  az_ids = { # Values are zero-based indexes into the availability zones of the selected region.
+    "10.2.0.0/19"  = "0"
+    "10.2.32.0/19" = "1"
   }
   aws    = "default"
   prefix = "cka-task03"

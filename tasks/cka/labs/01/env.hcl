@@ -4,9 +4,9 @@ locals {
   solutions_video="xyz"
   debug_output   = "false"
   vpc_default_cidr =  "10.2.0.0/16"
-  az_ids = {
-    "10.2.0.0/19"  = "eun1-az3"
-    "10.2.32.0/19" = "eun1-az2"
+  az_ids = { # Values are zero-based indexes into the availability zones of the selected region.
+    "10.2.0.0/19"  = "0"
+    "10.2.32.0/19" = "1"
   }
   aws    = "default"
   prefix = "cka-task02"
