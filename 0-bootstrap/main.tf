@@ -78,6 +78,18 @@ resource "aws_iam_policy" "custom_admin_policy" {
   policy      = data.aws_iam_policy_document.admin_restricted_policy.json
 }
 
+# TODO: compare with the table created by Terraform
+resource "aws_dynamodb_table" "cmdb_dynamodb_table" {
+  region       = var.backend_region
+  name         = var.cmdb_dynamodb_table
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "LockID"
+
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+}
 
 output "policy_arn" {
   value = aws_iam_policy.custom_admin_policy.arn
