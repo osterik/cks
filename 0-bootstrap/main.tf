@@ -74,8 +74,7 @@ data "aws_iam_policy_document" "admin_restricted_policy" {
 resource "aws_iam_policy" "custom_admin_policy" {
   name        = "CKAMockRegionalAdminPolicy"
   path        = "/"
-  description = "Admin access for VPC, EC2, IAM, EKS in ${var.region} and specific S3/DDB resources"
-  # description = "Admin access for VPC, EC2, and EKS in ${var.region}, IAM globally, and backend resources in ${var.backend_region}"  
+  description = "Admin access for VPC, EC2, EKS in ${var.region}; backend in ${var.backend_region}; and IAM"  
   policy      = data.aws_iam_policy_document.admin_restricted_policy.json
 }
 
