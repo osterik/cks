@@ -3,9 +3,9 @@ data "aws_availability_zones" "available" {
 }
 
 resource "aws_subnet" "subnets_pub" {
-  depends_on              = [aws_dynamodb_table_item.cmdb]
+  for_each = var.az_ids
+
   vpc_id                  = aws_vpc.default.id
-  for_each                = var.az_ids
   map_public_ip_on_launch = true
   cidr_block              = each.key
   availability_zone_id = can(tonumber(each.value)) ? (
@@ -13,6 +13,8 @@ resource "aws_subnet" "subnets_pub" {
   ) : each.value
 
   tags = local.tags_all
+
+  depends_on = [aws_dynamodb_table_item.cmdb]
 
   lifecycle {
     ignore_changes = [
