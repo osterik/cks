@@ -9,7 +9,7 @@ locals {
     "10.2.32.0/19" = "1"
   }
   aws    = "default"
-  prefix = "cka-task02"
+  prefix = "cka-task01"
   tags = {
     "env_name"        = "cka-task01"
     "env_type"        = "dev"
