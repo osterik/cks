@@ -5,8 +5,8 @@ Creates a restricted AWS IAM policy for the lab environment. It grants regional 
 1. Create `terraform.tfvars` file and fill it
 ``` hcl
 aws_region          = "eu-west-1"
-s3_bucket_name      = "osterik-cka-mock-bucket-eu-west-1"
-dynamodb_table_name = "osterik-cka-mock-bucket-eu-west-1-lock"
+s3_bucket_name      = "<uniq_prefix>-cka-mock-bucket-eu-west-1"
+dynamodb_table_name = "cka-mock-cmdb"
 ```
 
 2. `terraform apply`
