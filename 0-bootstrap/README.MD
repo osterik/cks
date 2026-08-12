@@ -1,12 +1,13 @@
 # 0-bootstrap
 
-Creates a restricted AWS IAM policy for the lab environment. It grants regional access to EC2, VPC, and EKS, global IAM access, and full access to the configured S3 bucket and DynamoDB table.
+Creates a restricted AWS IAM policy for the lab environment. It grants access to EC2, VPC, and EKS in the deployment region, global IAM access, and access to the S3 backend bucket and CMDB DynamoDB table in the backend region. Terraform state locking is stored in S3.
 
 1. Create `terraform.tfvars` file and fill it
 ``` hcl
-aws_region          = "eu-west-1"
-s3_bucket_name      = "<uniq_prefix>-cka-mock-bucket-eu-west-1"
-dynamodb_table_name = "cka-mock-cmdb"
+region              = "eu-central-1"
+backend_region      = "eu-west-1"
+backend_bucket      = "<uniq_prefix>-cka-mock-bucket-eu-west-1"
+cmdb_dynamodb_table = "cka-mock-cmdb"
 ```
 
 2. `terraform apply`
