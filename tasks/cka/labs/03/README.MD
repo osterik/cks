@@ -1,6 +1,6 @@
 # Nginx ingress. Routing by header.
 
-We use the **ingress nginx** controller.
+We use the **ingress nginx** controller.  
 We have an  application (deployment, service , ingress) in namespace  **meg**. You can check the app via command  `curl http://ckad.local:30102/app`
 
 You need create new deployment, service, ingress  in namespace  **meg**
@@ -82,7 +82,6 @@ User-Agent: curl/7.68.0
 check result via  tests
 ```
 check_result
-
 ```
 
 ```
