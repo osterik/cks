@@ -81,7 +81,7 @@ cat > $kubelet_config_url/20-labels-taints.conf  <<EOF
 [Service]
 Environment="KUBELET_EXTRA_ARGS=--node-labels=node_name=${node_name},${node_labels}"
 EOF
-echo "Environment=\"KUBELET_EXTRA_ARGS=--node-labels=node_name=${node_name},${node_labels}\"">/etc/sysconfig/kubelet
+echo "Environment=\"KUBELET_EXTRA_ARGS=--node-labels=node_name=${node_name},${node_labels}\"">/etc/default/kubelet
 systemctl enable kubelet
 systemctl restart kubelet
 
