@@ -2,6 +2,7 @@
 ssh_password_enable_check=${ssh_password_enable}
 case $ssh_password_enable_check in
 true)
+    echo "*** ssh password enable "
     echo "ubuntu:${ssh_password}" |sudo chpasswd
     SSH_CONFIG_FILE="/etc/ssh/sshd_config"
     SSH_CONFIG_FILE_CLOUD="/etc/ssh/sshd_config.d/60-cloudimg-settings.conf"
@@ -15,6 +16,13 @@ true)
     echo "*** ssh password not enable "
 ;;
 esac
+
+echo "${ssh_private_key}">/home/ubuntu/.ssh/id_rsa
+chmod 600 /home/ubuntu/.ssh/id_rsa
+echo "${ssh_pub_key}">>/home/ubuntu/.ssh/authorized_keys
+chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa
+
+
 
 local_ipv4=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
 runtime_sh=${runtime}
@@ -61,7 +69,8 @@ while test $? -gt 0
    kubectl get node   --kubeconfig=/root/.kube/config
   done
 date
-echo "apply cni"
+
+echo "*** apply cni"
 kubectl apply -f ${calico_url}   --kubeconfig=/root/.kube/config
 
 echo "sleep 10"
@@ -111,8 +120,3 @@ fi
 curl "${task_script_url}" -o "task.sh"
 chmod +x  task.sh
 ./task.sh
-
-echo "${ssh_private_key}">/home/ubuntu/.ssh/id_rsa
-chmod 600 /home/ubuntu/.ssh/id_rsa
-echo "${ssh_pub_key}">>/home/ubuntu/.ssh/authorized_keys
-chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa
