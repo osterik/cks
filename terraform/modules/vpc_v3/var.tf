@@ -31,7 +31,7 @@ variable "subnets" {
     public = optional(map(object({
       name = string
       cidr = string
-      az   = string # Availability Zone or Availability Zone ID
+      az   = optional(string) # Availability Zone or Availability Zone ID. assigned automatically when omitted
       tags = optional(map(string), {})
       type = optional(string, "public") # any sort key for grouping . example , DB , WEB , APP , etc
 
@@ -65,7 +65,7 @@ variable "subnets" {
     private = optional(map(object({
       name                                           = string
       cidr                                           = string
-      az                                             = string # Availability Zone or Availability Zone ID
+      az                                             = optional(string) # Availability Zone or Availability Zone ID. assigned automatically when omitted
       tags                                           = optional(map(string), {})
       type                                           = optional(string, "private") # any sort key for grouping . example , DB , WEB , APP , etc
       nat_gateway                                    = optional(string, "AZ")      # AZ - nat gateway for  each AZ , SINGLE - single nat gateway for all AZ (for this option you need to set nat_gateway=DEFAULT in one of the public networks)  ,SUBNET - dedicate nat gateway for each  subnet with SUBNET  type   ,  NONE - no nat gateway
