@@ -46,6 +46,43 @@ resource "aws_s3_bucket_ownership_controls" "backend" {
   }
 }
 
+# 1. Remove old noncurrent versions and delete markers in 1d
+# 2. Clean config/ after 1d
+resource "aws_s3_bucket_lifecycle_configuration" "backend" {
+  region = var.backend_region
+  bucket = aws_s3_bucket.backend.id
+
+  depends_on = [aws_s3_bucket_versioning.backend]
+
+  rule {
+    id     = "delete-old-versions"
+    status = "Enabled"
+
+    filter {}
+
+    expiration {
+      expired_object_delete_marker = true
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = 1
+    }
+  }
+
+  rule {
+    id     = "delete-config-objects"
+    status = "Enabled"
+
+    filter {
+      prefix = "config/"
+    }
+
+    expiration {
+      days = 1
+    }
+  }
+}
+
 data "aws_iam_policy_document" "backend_bucket_policy" {
   statement {
     sid     = "EnforcedTLS"
