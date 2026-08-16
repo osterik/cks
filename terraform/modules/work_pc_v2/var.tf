@@ -67,7 +67,8 @@ variable "work_pc" {
       private_key = string
       pub_key     = string
     })
-    test_url          = string # TODO: add description(explanation)
+    test_url          = string # "https:..." dowload tests from given URL
+                               # "file:..." inject test from the local filesystem
     exam_time_minutes = string
     util = object({
       kubectl_version = string
