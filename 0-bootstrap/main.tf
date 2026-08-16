@@ -1,6 +1,11 @@
-variable "region" {
-  description = "The AWS region where EC2, VPC, and EKS resources are deployed"
-  type        = string
+variable "regions" {
+  description = "The AWS regions where EC2, VPC, and EKS resources are deployed"
+  type        = list(string)
+
+  validation {
+    condition     = length(var.regions) > 0
+    error_message = "At least one AWS region must be specified."
+  }
 }
 
 variable "backend_region" {
@@ -34,7 +39,7 @@ data "aws_iam_policy_document" "admin_restricted_policy" {
     condition {
       test     = "StringEquals"
       variable = "aws:RequestedRegion"
-      values   = [var.region]
+      values   = var.regions
     }
   }
 
@@ -74,7 +79,7 @@ data "aws_iam_policy_document" "admin_restricted_policy" {
 resource "aws_iam_policy" "custom_admin_policy" {
   name        = "CKAMockRegionalAdminPolicy"
   path        = "/"
-  description = "Admin access for VPC, EC2, EKS in ${var.region}; backend in ${var.backend_region}; and IAM"  
+  description = "Admin access for VPC, EC2, EKS in deploy regions; backend in ${var.backend_region}; and IAM"
   policy      = data.aws_iam_policy_document.admin_restricted_policy.json
 }
 
