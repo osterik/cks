@@ -18,7 +18,7 @@ locals {
   # S3 resource count is known before apply. Keep a small gzip safety margin of 64b
   user_data_with_tests_inline_sizing_raw = templatefile("template/boot_zip.sh", {
     boot_zip = base64gzip(templatefile(var.work_pc.user_data_template, merge(local.user_data_template_vars, {
-      ssh_password = substr("aB3dE5fG7h9J", 0, local.ssh_password_len)
+      ssh_password = substr("aB3dE5fG7h9J", 0, random_string.ssh.length)
       tests_b64    = local.tests_b64
       tests_s3_uri = ""
     })))
