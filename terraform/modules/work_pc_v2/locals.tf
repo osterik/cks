@@ -41,10 +41,16 @@ locals {
     ssh_pub_key         = var.work_pc.ssh.pub_key
     exam_time_minutes   = var.work_pc.exam_time_minutes
     test_url            = local.tests_is_local ? "" : var.work_pc.test_url
-    task_script_url     = var.work_pc.task_script_url
+    task_script_url     = local.task_script_is_local ? "" : var.work_pc.task_script_url
+    task_script_b64     = local.task_script_b64
     ssh_password        = random_string.ssh.result
     ssh_password_enable = var.ssh_password_enable
     hosts               = local.hosts
     hostname            = var.app_name
   }
+
+  # inject task script from local filesystem
+  task_script_is_local  = startswith(var.work_pc.task_script_url, "file:")
+  task_script_file_path = local.task_script_is_local ? trimprefix(var.work_pc.task_script_url, "file:") : ""
+  task_script_b64       = local.task_script_is_local ? filebase64(local.task_script_file_path) : ""
 }

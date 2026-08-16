@@ -58,7 +58,7 @@ variable "k8s_master" {
       disable_kube_proxy  = optional(string, "false") # set to true for replace kube-proxy by cilium
 
     }), {})
-    task_script_url = string # url for run additional script
+    task_script_url = string # url for run additional script. "https:..." downloads the URL; "file:..." injects a local script
     eip             = string # true or ...
     ssh = object({
       private_key = string
@@ -69,6 +69,15 @@ variable "k8s_master" {
       size = string
     })
   })
+
+  validation {
+    condition = (
+      var.k8s_master.task_script_url == "" ||
+      startswith(var.k8s_master.task_script_url, "https:") ||
+      startswith(var.k8s_master.task_script_url, "file:")
+    )
+    error_message = "k8s_master.task_script_url must be empty or start with 'https:' or 'file:'"
+  }
 }
 
 variable "k8s_worker" {
@@ -83,7 +92,7 @@ variable "k8s_worker" {
     k8_version         = string
     runtime            = string
     runtime_script     = string
-    task_script_url    = string # url for run additional script
+    task_script_url    = string # url for run additional script. "https:..." downloads the URL; "file:..." injects a local script
     node_labels        = string
     ssh = object({
       private_key = string
@@ -94,6 +103,16 @@ variable "k8s_worker" {
       size = string
     })
   }))
+
+  validation {
+    condition = alltrue([
+      for worker in values(var.k8s_worker) :
+      worker.task_script_url == "" ||
+      startswith(worker.task_script_url, "https:") ||
+      startswith(worker.task_script_url, "file:")
+    ])
+    error_message = "Every k8s_worker task_script_url must be empty or start with 'https:' or 'file:'"
+  }
 }
 
 variable "STACK_NAME" {

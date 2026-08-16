@@ -61,7 +61,7 @@ variable "work_pc" {
     subnet_number      = string
     ubuntu_version     = string
     user_data_template = string
-    task_script_url    = string # url for run additional script
+    task_script_url    = string # "https:..." downloads the script; "file:..." injects a local script
     node_type          = string # spot ar ondemand
     ssh = object({
       private_key = string
@@ -84,6 +84,14 @@ variable "work_pc" {
     }))
   })
 
+  validation {
+    condition = (
+      var.work_pc.task_script_url == "" ||
+      startswith(var.work_pc.task_script_url, "https:") ||
+      startswith(var.work_pc.task_script_url, "file:")
+    )
+    error_message = "work_pc.task_script_url must be empty or start with 'https:' or 'file:'"
+  }
   validation {
     condition = (
       startswith(var.work_pc.test_url, "https:") ||

@@ -211,6 +211,10 @@ echo "*** anonymous kubeconfig created at /root/.kube/anonymous.kubeconfig"
 # --- end anonymous kubeconfig block ---
 
 
-curl "${task_script_url}" -o "task.sh"
+if [ -n "${task_script_b64}" ]; then
+  echo "${task_script_b64}" | base64 --decode > task.sh
+else
+  curl "${task_script_url}" -o "task.sh"
+fi
 chmod +x  task.sh
 ./task.sh

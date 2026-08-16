@@ -12,7 +12,8 @@ resource "aws_launch_template" "worker" {
       k8_version          = each.value.k8_version
       runtime             = each.value.runtime
       runtime_script      = file(each.value.runtime_script)
-      task_script_url     = each.value.task_script_url
+      task_script_url     = startswith(each.value.task_script_url, "file:") ? "" : each.value.task_script_url
+      task_script_b64     = startswith(each.value.task_script_url, "file:") ? filebase64(trimprefix(each.value.task_script_url, "file:")) : ""
       node_name           = each.key
       node_labels         = each.value.node_labels
       ssh_private_key     = each.value.ssh.private_key
