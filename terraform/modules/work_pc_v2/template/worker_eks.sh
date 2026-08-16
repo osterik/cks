@@ -83,7 +83,13 @@ cd bats
 echo "*** download tests "
 mkdir /var/work/tests/result -p
 mkdir /var/work/tests/artifacts -p
-curl "${test_url}"  -o "tests.bats" -s
+if [ -n "${tests_b64}" ]; then
+  echo "${tests_b64}" | base64 --decode > tests.bats
+elif [ -n "${tests_s3_uri}" ]; then
+  aws s3 cp "${tests_s3_uri}" tests.bats
+else
+  curl --fail --silent --show-error "${test_url}" -o tests.bats
+fi
 chown ubuntu:ubuntu tests.bats
 mv tests.bats  /var/work/tests/
 chmod  -R 777 /var/work/tests/
