@@ -7,6 +7,7 @@ locals {
   item_id_data       = "CMDB_data_${local.USER_ID}_${local.ENV_ID}_${var.app_name}_${var.prefix}"
   subnets            = var.subnets
   all_instance_types = toset(var.spot_additional_types)
+  ssh_password_len   = 10
 
   type_sub_spot = {
     for pair in setproduct(local.all_instance_types, var.subnets) :
@@ -27,9 +28,23 @@ locals {
   }
   tags_all_k8_master = var.work_pc.node_type == "spot" ? merge(local.tags_all, local.tags_k8_master) : {}
 
-  worker_pc_ip = var.work_pc.node_type == "spot" ? join("", data.aws_instances.spot_fleet["enable"].public_ips) : aws_instance.master["enable"].public_ip
+  worker_pc_ip       = var.work_pc.node_type == "spot" ? join("", data.aws_instances.spot_fleet["enable"].public_ips) : aws_instance.master["enable"].public_ip
   worker_pc_ip_local = var.work_pc.node_type == "spot" ? join("", data.aws_instances.spot_fleet["enable"].private_ips) : aws_instance.master["enable"].private_ip
-  master_ami   = var.work_pc.ami_id != "" ? var.work_pc.ami_id : data.aws_ami.master.image_id
-  worker_pc_id = var.work_pc.node_type == "spot" ? join("", data.aws_instances.spot_fleet["enable"].ids) : aws_instance.master["enable"].id
-  hosts        = join(" ", var.host_list)
+  master_ami         = var.work_pc.ami_id != "" ? var.work_pc.ami_id : data.aws_ami.master.image_id
+  worker_pc_id       = var.work_pc.node_type == "spot" ? join("", data.aws_instances.spot_fleet["enable"].ids) : aws_instance.master["enable"].id
+  hosts              = join(" ", var.host_list)
+
+  user_data_template_vars = {
+    clusters_config     = join(" ", [for key, value in var.work_pc.clusters_config : "${key}=${value}"])
+    kubectl_version     = var.work_pc.util.kubectl_version
+    ssh_private_key     = var.work_pc.ssh.private_key
+    ssh_pub_key         = var.work_pc.ssh.pub_key
+    exam_time_minutes   = var.work_pc.exam_time_minutes
+    test_url            = local.tests_is_local ? "" : var.work_pc.test_url
+    task_script_url     = var.work_pc.task_script_url
+    ssh_password        = random_string.ssh.result
+    ssh_password_enable = var.ssh_password_enable
+    hosts               = local.hosts
+    hostname            = var.app_name
+  }
 }

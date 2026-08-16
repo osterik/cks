@@ -101,3 +101,23 @@ output "solutions_video" {
 output "hosts" {
   value = ["${var.app_name}=${local.worker_pc_ip_local}"]
 }
+
+output "user_data_size_bytes" {
+  description = "Raw EC2 user_data size in bytes before the outer Base64 encoding"
+  value       = length(local.user_data_raw)
+
+  precondition {
+    condition     = length(local.user_data_raw) <= 16 * 1024
+    error_message = "EC2 user_data is ${length(local.user_data_raw)} bytes; the maximum allowed size is 16384 bytes (16 KiB)."
+  }
+}
+
+output "user_data_with_tests_inline_size_bytes" {
+  description = "Calculated raw EC2 user_data size when tests.bats is embedded"
+  value       = length(local.user_data_with_tests_inline_sizing_raw)
+}
+
+output "tests_delivery_method" {
+  description = "Selected tests.bats delivery method: user_data, s3, or url"
+  value       = local.tests_delivery_method
+}

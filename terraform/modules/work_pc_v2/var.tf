@@ -67,7 +67,7 @@ variable "work_pc" {
       private_key = string
       pub_key     = string
     })
-    test_url          = string
+    test_url          = string # TODO: add description(explanation)
     exam_time_minutes = string
     util = object({
       kubectl_version = string
@@ -83,6 +83,14 @@ variable "work_pc" {
       encrypted             = optional(bool)
     }))
   })
+
+  validation {
+    condition = (
+      startswith(var.work_pc.test_url, "https:") ||
+      startswith(var.work_pc.test_url, "file:")
+    )
+    error_message = "work_pc.test_url must start with 'https:' or 'file:'"
+  }
 }
 
 variable "STACK_NAME" {
