@@ -2,7 +2,6 @@ locals {
   questions_list    = "https://github.com/ViktorUJ/cks/blob/master/tasks/cka/labs/116/README.MD"
   solutions_scripts = "https://github.com/ViktorUJ/cks/blob/master/tasks/cka/labs/116/node-1/files/solutions/1.MD"
   solutions_video   = "Not ready yet"
-  region            = "eu-central-1"
   vpc_default_cidr  = "10.20.0.0/16"
   az_ids = {
     "10.20.0.0/19"  = "euc1-az1"

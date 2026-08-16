@@ -3,7 +3,6 @@ locals {
   solutions_scripts = "https://github.com/ViktorUJ/cks/blob/master/tasks/cka/labs/102/worker/files/solutions/1.MD"
   solutions_video   = "Not ready yet"
   debug_output      = "false"
-  region            = "eu-central-1"
   vpc_default_cidr  = "10.10.0.0/16"
   aws               = "default"
   prefix            = "cka-task102"

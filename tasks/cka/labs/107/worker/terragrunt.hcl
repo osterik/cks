@@ -31,7 +31,6 @@ inputs = {
   questions_list    = local.vars.locals.questions_list
   solutions_scripts = local.vars.locals.solutions_scripts
   solutions_video   = local.vars.locals.solutions_video
-  region            = local.vars.locals.region
   aws               = local.vars.locals.aws
   prefix            = local.vars.locals.prefix
   tags_common       = local.vars.locals.tags

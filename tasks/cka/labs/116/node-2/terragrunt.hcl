@@ -24,7 +24,6 @@ dependency "vpc" {
 }
 
 inputs = {
-  region       = local.vars.locals.region
   aws          = local.vars.locals.aws
   prefix       = local.vars.locals.prefix
   tags_common  = local.vars.locals.tags
