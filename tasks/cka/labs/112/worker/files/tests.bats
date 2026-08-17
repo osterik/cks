@@ -13,7 +13,7 @@ CTX="--context cluster1-admin@cluster1"
   f=/var/work/tests/artifacts/etcd/etcd-snapshot-1.db
   if [[ -s "$f" ]]; then
     echo '1' >> /var/work/tests/result/ok; result=0
-  else echo "$f missing/empty (скопируйте снапшот S1 с control plane на worker)"; result=1; fi
+  else echo "$f missing/empty (copy snapshot S1 from the control plane to the worker)"; result=1; fi
   [ "$result" == "0" ]
 }
 
@@ -22,7 +22,7 @@ CTX="--context cluster1-admin@cluster1"
   f=/var/work/tests/artifacts/etcd/etcd-snapshot-2.db
   if [[ -s "$f" ]]; then
     echo '1' >> /var/work/tests/result/ok; result=0
-  else echo "$f missing/empty (скопируйте снапшот S2 с control plane на worker)"; result=1; fi
+  else echo "$f missing/empty (copy snapshot S2 from the control plane to the worker)"; result=1; fi
   [ "$result" == "0" ]
 }
 
@@ -45,6 +45,6 @@ CTX="--context cluster1-admin@cluster1"
   dp=$(kubectl get deploy demo-web $CTX $NS --no-headers 2>/dev/null | wc -l)
   if [[ "$ns" == "1" ]] && [[ "$cm" == "1" ]] && [[ "$dp" == "1" ]]; then
     echo '1' >> /var/work/tests/result/ok; result=0
-  else echo "snapshot-demo ns=$ns cm=$cm deploy=$dp (ожидается восстановление из снапшота S2)"; result=1; fi
+  else echo "snapshot-demo ns=$ns cm=$cm deploy=$dp (expected restoration from snapshot S2)"; result=1; fi
   [ "$result" == "0" ]
 }

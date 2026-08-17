@@ -23,7 +23,7 @@ CTX="--context cluster1-admin@cluster1"
   echo '1' >> /var/work/tests/result/all
   NS="-n app-cfg"
   cmv=$(kubectl get cm app-config $CTX $NS -o jsonpath='{.data.COLOR}' 2>/dev/null)
-  # pod должен получить переменную из configmap (через env или envFrom)
+  # pod must get the variable from configmap (via env or envFrom)
   img=$(kubectl get po cfg-pod $CTX $NS -o jsonpath='{.spec.containers[0].image}' 2>/dev/null)
   ref=$(kubectl get po cfg-pod $CTX $NS -o json 2>/dev/null | jq -r '[.spec.containers[0].envFrom[]?.configMapRef.name] + [.spec.containers[0].env[]?.valueFrom.configMapKeyRef.name] | map(select(.=="app-config")) | length')
   if [[ "$cmv" == "blue" ]] && [[ -n "$img" ]] && [[ "$ref" -ge 1 ]]; then

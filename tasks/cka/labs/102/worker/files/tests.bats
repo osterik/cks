@@ -14,8 +14,8 @@ CTX="--context cluster1-admin@cluster1"
   NS="-n default"
   image=$(kubectl get deploy web $CTX $NS -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null)
   ready=$(kubectl get deploy web $CTX $NS -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
-  # web стартует с :latest (задание 1), затем обновляется на :alpine (задание 2) —
-  # поэтому здесь проверяем только сам деплой и 3 готовые реплики, без привязки к тегу
+  # web starts with :latest (task 1), then gets updated to :alpine (task 2),
+  # so only the deployment and its 3 ready replicas are checked here, regardless of the tag
   if [[ "$image" == viktoruj/ping_pong:* ]] && [[ "$ready" == "3" ]]; then
     echo '1' >> /var/work/tests/result/ok; result=0
   else echo "web image=$image ready=$ready"; result=1; fi

@@ -13,7 +13,7 @@ CTX="--context cluster1-admin@cluster1"
   api=$(kubectl get --raw='/healthz' $CTX 2>/dev/null)
   if [[ "$api" == "ok" ]]; then
     echo '1' >> /var/work/tests/result/ok; result=0
-  else echo "API healthz=$api (apiserver не отвечает — починить первым!)"; result=1; fi
+  else echo "API healthz=$api (the API server is not responding; fix it first!)"; result=1; fi
   [ "$result" == "0" ]
 }
 

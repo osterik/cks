@@ -74,7 +74,7 @@ CTX="--context cluster1-admin@cluster1"
   [ "$result" == "0" ]
 }
 
-@test "7. Deployment spread-app: строгий topologySpread (maxSkew 1, hostname, DoNotSchedule)" {
+@test "7. Deployment spread-app: strict topologySpread (maxSkew 1, hostname, DoNotSchedule)" {
   echo '1' >> /var/work/tests/result/all
   NS="-n default"
   ms=$(kubectl get deploy spread-app $CTX $NS -o jsonpath='{.spec.template.spec.topologySpreadConstraints[0].maxSkew}' 2>/dev/null)

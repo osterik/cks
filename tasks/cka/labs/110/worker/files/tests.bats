@@ -36,9 +36,9 @@ CTX="--context cluster1-admin@cluster1"
 @test "3. NetworkPolicies in prod-db: default-deny + allow from prod namespace" {
   echo '1' >> /var/work/tests/result/all
   NS="-n prod-db"
-  # default-deny: политика с пустым podSelector и Ingress
+  # default-deny: policy with an empty podSelector and Ingress
   deny=$(kubectl get netpol $CTX $NS -o json 2>/dev/null | jq -r '[.items[] | select((.spec.podSelector == {}) and (.spec.policyTypes | index("Ingress")) and ((.spec.ingress // []) | length == 0))] | length')
-  # allow: политика с namespaceSelector в from
+  # allow: policy with a namespaceSelector in from
   allow=$(kubectl get netpol $CTX $NS -o json 2>/dev/null | jq -r '[.items[] | select([.spec.ingress[]?.from[]?.namespaceSelector] | length > 0)] | length')
   if [[ "$deny" -ge 1 ]] && [[ "$allow" -ge 1 ]]; then
     echo '1' >> /var/work/tests/result/ok; result=0
