@@ -29,7 +29,7 @@ CTX="--context cluster1-admin@cluster1"
 @test "3. Cluster healthy after restore: kube-system pods Ready, API up" {
   echo '1' >> /var/work/tests/result/all
   NS="-n kube-system"
-  api=$(kubectl get --raw='/healthz' $CTX $NS 2>/dev/null)
+  api=$(kubectl get --raw='/healthz' $CTX 2>/dev/null)
   notready=$(kubectl get pods $CTX $NS --no-headers 2>/dev/null | grep -Ev 'Running|Completed' | wc -l)
   if [[ "$api" == "ok" ]] && [[ "$notready" == "0" ]]; then
     echo '1' >> /var/work/tests/result/ok; result=0

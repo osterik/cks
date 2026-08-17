@@ -12,7 +12,7 @@ CTX="--context cluster1-admin@cluster1"
   echo '1' >> /var/work/tests/result/all
   NS="-n default"
   node=$(kubectl get po alpine $CTX $NS -o jsonpath='{.spec.nodeName}' 2>/dev/null)
-  ssd=$(kubectl get node "$node" $CTX $NS -o jsonpath='{.metadata.labels.disk}' 2>/dev/null)
+  ssd=$(kubectl get node "$node" $CTX -o jsonpath='{.metadata.labels.disk}' 2>/dev/null)
   if [[ -n "$node" ]] && [[ "$ssd" == "ssd" ]]; then
     echo '1' >> /var/work/tests/result/ok; result=0
   else echo "alpine node=$node disk=$ssd"; result=1; fi
@@ -43,7 +43,7 @@ CTX="--context cluster1-admin@cluster1"
 @test "4. PriorityClass high-priority (value 1000000) used by deployment prio-app" {
   echo '1' >> /var/work/tests/result/all
   NS="-n default"
-  val=$(kubectl get priorityclass high-priority $CTX $NS -o jsonpath='{.value}' 2>/dev/null)
+  val=$(kubectl get priorityclass high-priority $CTX -o jsonpath='{.value}' 2>/dev/null)
   pc=$(kubectl get deploy prio-app $CTX $NS -o jsonpath='{.spec.template.spec.priorityClassName}' 2>/dev/null)
   if [[ "$val" == "1000000" ]] && [[ "$pc" == "high-priority" ]]; then
     echo '1' >> /var/work/tests/result/ok; result=0

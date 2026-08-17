@@ -11,7 +11,7 @@ CTX="--context cluster1-admin@cluster1"
 @test "1. Namespace ckad-101 exists" {
   echo '1' >> /var/work/tests/result/all
   NS="-n default"
-  result=$(kubectl get ns ckad-101 $CTX $NS -o jsonpath='{.metadata.name}' 2>/dev/null)
+  result=$(kubectl get ns ckad-101 $CTX -o jsonpath='{.metadata.name}' 2>/dev/null)
   if [[ "$result" == "ckad-101" ]]; then
     echo '1' >> /var/work/tests/result/ok
   fi

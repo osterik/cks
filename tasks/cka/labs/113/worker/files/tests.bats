@@ -23,7 +23,7 @@ CTX="--context cluster1-admin@cluster1"
 @test "2. SA pvviewer + ClusterRole/CRB: SA can list persistentvolumes; pod uses SA" {
   echo '1' >> /var/work/tests/result/all
   NS="-n default"
-  sa=$(kubectl get sa pvviewer $CTX -o jsonpath='{.metadata.name}' 2>/dev/null)
+  sa=$(kubectl get sa pvviewer $CTX $NS -o jsonpath='{.metadata.name}' 2>/dev/null)
   cani=$(kubectl auth can-i list persistentvolumes --as=system:serviceaccount:default:pvviewer $CTX 2>/dev/null)
   podsa=$(kubectl get po pvviewer $CTX $NS -o jsonpath='{.spec.serviceAccountName}' 2>/dev/null)
   if [[ "$sa" == "pvviewer" ]] && [[ "$cani" == "yes" ]] && [[ "$podsa" == "pvviewer" ]]; then
