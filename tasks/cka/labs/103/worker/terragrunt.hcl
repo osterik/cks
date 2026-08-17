@@ -56,7 +56,7 @@ inputs = {
     }
     exam_time_minutes = "360"
     test_url          = "file:${get_terragrunt_dir()}/files/tests.bats"
-    task_script_url   = "https://raw.githubusercontent.com/ViktorUJ/cks/refs/heads/master/tasks/cka/labs/103/worker/files/worker.sh"
+    task_script_url   = "file:${get_terragrunt_dir()}/files/worker.sh"
     ssh = {
       private_key = dependency.ssh-keys.outputs.private_key
       pub_key     = dependency.ssh-keys.outputs.pub_key
