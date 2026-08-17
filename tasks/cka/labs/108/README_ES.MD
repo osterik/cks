@@ -68,6 +68,12 @@ Instancias: `t4g.medium`, Ubuntu `22.04`. El clúster tiene dos nodos: el master
 `/pv/analytics` para hostPath, por lo que el Pod con el volumen debe planificarse
 precisamente en él.
 
+Durante la preparación del entorno, se crea en el worker un Pod llamado `reserve` con solicitudes
+de recursos de `1500m` de CPU y `1200Mi` de memoria. Esto hace que el worker sea menos preferible
+para el planificador predeterminado cuando un Pod no tiene restricciones de ubicación de nodo,
+por lo que la tarea 3 requiere un `nodeSelector` explícito. El Pod `reserve` y sus solicitudes de
+recursos forman parte de la infraestructura del laboratorio y no deben modificarse.
+
 ## Despliegue
 
 ```bash

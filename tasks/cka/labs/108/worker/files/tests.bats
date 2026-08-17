@@ -36,8 +36,21 @@ CTX="--context cluster1-admin@cluster1"
   node=$(kubectl get po analytics $CTX $NS -o jsonpath='{.spec.nodeName}' 2>/dev/null)
   lbl=$(kubectl get node "$node" $CTX -o jsonpath='{.metadata.labels.node}' 2>/dev/null)
   mp=$(kubectl get po analytics $CTX $NS -o jsonpath='{.spec.containers[0].volumeMounts[0].mountPath}' 2>/dev/null)
-  if [[ "$claim" == "pvc-analytics" ]] && [[ "$lbl" == "node_2" ]] && [[ "$mp" == "/pv/analytics" ]]; then
+  # make sure the 'reserve' pod still exists and prevent pods being allocated to 'node_2' by default:
+  NS="-n kube-system"
+  r_phase=$(kubectl get po reserve $CTX $NS -o jsonpath='{.status.phase}' 2>/dev/null)
+  r_node=$(kubectl get po reserve $CTX $NS -o jsonpath='{.spec.nodeName}' 2>/dev/null)
+  r_lbl=$(kubectl get node "$r_node" $CTX -o jsonpath='{.metadata.labels.node}' 2>/dev/null)
+  r_cpu=$(kubectl get po reserve $CTX $NS -o jsonpath='{.spec.containers[0].resources.requests.cpu}' 2>/dev/null)
+  r_memory=$(kubectl get po reserve $CTX $NS -o jsonpath='{.spec.containers[0].resources.requests.memory}' 2>/dev/null)
+  if [[ "$claim" == "pvc-analytics" ]] && [[ "$lbl" == "node_2" ]] && [[ "$mp" == "/pv/analytics" ]] && \
+     [[ "$r_phase" == "Running" ]] && [[ "$r_lbl" == "node_2" ]] && \
+     [[ "$r_cpu" == "1500m" ]] && [[ "$r_memory" == "1200Mi" ]]; then
     echo '1' >> /var/work/tests/result/ok; result=0
-  else echo "analytics claim=$claim node=$node label=$lbl mountPath=$mp"; result=1; fi
+  else
+    echo "analytics claim=$claim node=$node label=$lbl mountPath=$mp"
+    echo "reserve phase=$r_phase node=$r_node label=$r_lbl cpu=$r_cpu memory=$r_memory"
+    result=1
+  fi
   [ "$result" == "0" ]
 }

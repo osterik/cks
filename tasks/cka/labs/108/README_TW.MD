@@ -64,6 +64,11 @@ flowchart TB
 worker。Worker 帶有 label `node=node_2` 以及供 hostPath 使用的目錄 `/pv/analytics`,因此
 帶有 volume 的 Pod 必須正好排程到它上面。
 
+在環境準備期間，系統會在 worker 上建立名為 `reserve` 的 Pod，其資源請求為 `1500m` CPU
+和 `1200Mi` 記憶體。這會讓未指定節點放置限制的 Pod 使用預設排程器時，worker 的優先度較低，
+因此任務 3 需要明確指定 `nodeSelector`。`reserve` Pod 及其資源請求是實驗環境基礎設施的一部分，
+不得修改。
+
 ## 部署
 
 ```bash

@@ -67,6 +67,12 @@ Instances : `t4g.medium`, Ubuntu `22.04`. Le cluster comporte deux nœuds — le
 `/pv/analytics` pour hostPath, le Pod avec le volume doit donc être planifié précisément
 dessus.
 
+Lors de la préparation de l'environnement, un Pod nommé `reserve` est créé sur le worker avec des
+demandes de ressources de `1500m` de CPU et `1200Mi` de mémoire. Le worker est ainsi moins favorisé
+par le planificateur par défaut lorsqu'un Pod ne comporte aucune contrainte de placement sur un
+nœud ; la tâche 3 nécessite donc un `nodeSelector` explicite. Le Pod `reserve` et ses demandes de
+ressources font partie de l'infrastructure du lab et ne doivent pas être modifiés.
+
 ## Déploiement
 
 ```bash

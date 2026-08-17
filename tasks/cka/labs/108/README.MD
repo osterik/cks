@@ -64,6 +64,12 @@ Instances: `t4g.medium`, Ubuntu `22.04`. The cluster has two nodes — the maste
 (control-plane) and one worker. The worker carries the label `node=node_2` and the directory
 `/pv/analytics` for hostPath, so the Pod with the volume must be scheduled exactly there.
 
+During environment preparation, a Pod named `reserve` is created on the worker with resource
+requests of `1500m` CPU and `1200Mi` memory. This makes the worker less preferable to the
+default scheduler when a Pod has no node placement constraint, so task 3 requires an explicit
+`nodeSelector`. The `reserve` Pod and its resource requests are part of the lab infrastructure
+and must not be changed.
+
 ## Deployment
 
 ```bash

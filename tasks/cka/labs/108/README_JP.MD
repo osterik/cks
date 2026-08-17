@@ -64,6 +64,12 @@ flowchart TB
 worker が 1 台です。Worker は label `node=node_2` と hostPath 用のディレクトリ `/pv/analytics` を
 持つため、volume を使う Pod はまさにこのノードにスケジュールされる必要があります。
 
+環境の準備中に、`1500m` CPU と `1200Mi` メモリをリソース要求とする `reserve` という名前の
+Pod が worker 上に作成されます。これにより、Pod にノード配置制約がない場合、デフォルトの
+スケジューラにとって worker の優先度が低くなるため、課題 3 では明示的な `nodeSelector` が
+必要になります。`reserve` Pod とそのリソース要求はラボのインフラストラクチャの一部であり、
+変更してはいけません。
+
 ## デプロイ
 
 ```bash

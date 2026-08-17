@@ -66,6 +66,13 @@ Instanzen: `t4g.medium`, Ubuntu `22.04`. Der Cluster hat zwei Nodes — den Mast
 (control-plane) und einen Worker. Der Worker trägt das Label `node=node_2` und das Verzeichnis
 `/pv/analytics` für hostPath, daher muss der Pod mit dem Volume genau dort geplant werden.
 
+Während der Vorbereitung der Umgebung wird auf dem Worker ein Pod namens `reserve` mit
+Ressourcenanforderungen von `1500m` CPU und `1200Mi` Arbeitsspeicher erstellt. Dadurch wird der
+Worker für den Standard-Scheduler weniger attraktiv, wenn ein Pod keine Einschränkung für die
+Node-Platzierung besitzt, weshalb Aufgabe 3 einen expliziten `nodeSelector` erfordert. Der Pod
+`reserve` und seine Ressourcenanforderungen sind Teil der Lab-Infrastruktur und dürfen nicht
+verändert werden.
+
 ## Bereitstellung
 
 ```bash
