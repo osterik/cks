@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 export KUBECONFIG=/home/ubuntu/.kube/config
-CTX="cluster1-admin@cluster1"
+CTX="--context cluster1-admin@cluster1"
 SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=15 k8s1_controlPlane_1"
 
 @test "0 Init" {
@@ -23,7 +23,8 @@ SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectT
 
 @test "2. CoreDNS restored (readyReplicas >= 1)" {
   echo '1' >> /var/work/tests/result/all
-  ready=$(kubectl -n kube-system get deploy coredns --context $CTX -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
+  NS="-n kube-system"
+  ready=$(kubectl get deploy coredns $CTX $NS -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
   if [[ "$ready" -ge 1 ]] 2>/dev/null; then
     echo '1' >> /var/work/tests/result/ok; result=0
   else echo "coredns readyReplicas=$ready"; result=1; fi
@@ -44,8 +45,9 @@ SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectT
 
 @test "4. Pod dns-tuned has dnsConfig ndots=2, dns-default uses default DNS" {
   echo '1' >> /var/work/tests/result/all
-  tuned=$(kubectl get po dns-tuned --context $CTX -o jsonpath='{.spec.dnsConfig.options[?(@.name=="ndots")].value}' 2>/dev/null)
-  defphase=$(kubectl get po dns-default --context $CTX -o jsonpath='{.status.phase}' 2>/dev/null)
+  NS="-n default"
+  tuned=$(kubectl get po dns-tuned $CTX $NS -o jsonpath='{.spec.dnsConfig.options[?(@.name=="ndots")].value}' 2>/dev/null)
+  defphase=$(kubectl get po dns-default $CTX $NS -o jsonpath='{.status.phase}' 2>/dev/null)
   if [[ "$tuned" == "2" ]] && [[ "$defphase" == "Running" ]]; then
     echo '1' >> /var/work/tests/result/ok; result=0
   else echo "dns-tuned ndots=$tuned (expected 2), dns-default phase=$defphase (expected Running)"; result=1; fi
@@ -54,8 +56,9 @@ SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectT
 
 @test "5. ndots report is correct (/home/ubuntu/answers/dns.txt)" {
   echo '1' >> /var/work/tests/result/all
+  NS="-n default"
   file=/home/ubuntu/answers/dns.txt
-  exp=$(kubectl exec dns-default --context $CTX -- cat /etc/resolv.conf 2>/dev/null | grep -oE 'ndots:[0-9]+' | cut -d: -f2 | xargs)
+  exp=$(kubectl exec dns-default $CTX $NS -- cat /etc/resolv.conf 2>/dev/null | grep -oE 'ndots:[0-9]+' | cut -d: -f2 | xargs)
   got=$(grep '^default_ndots=' "$file" 2>/dev/null | cut -d= -f2- | xargs)
   tuned=$(grep '^tuned_ndots=' "$file" 2>/dev/null | cut -d= -f2- | xargs)
   if [[ -n "$exp" ]] && [[ "$got" == "$exp" ]] && [[ "$tuned" == "2" ]]; then
@@ -66,7 +69,8 @@ SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectT
 
 @test "6. Pod DNS name written correctly to /home/ubuntu/answers/pod-dns-name.txt" {
   echo '1' >> /var/work/tests/result/all
-  pod_ip=$(kubectl get pod dns-test -n dns-lab --context $CTX -o jsonpath='{.status.podIP}' 2>/dev/null)
+  NS="-n dns-lab"
+  pod_ip=$(kubectl get pod dns-test $CTX $NS -o jsonpath='{.status.podIP}' 2>/dev/null)
   expected_dns="$(echo $pod_ip | tr '.' '-').dns-lab.pod.cluster.local"
   actual=$(cat /home/ubuntu/answers/pod-dns-name.txt 2>/dev/null | tr -d '[:space:]')
   if [[ -n "$pod_ip" ]] && [[ "$actual" == "$expected_dns" ]]; then

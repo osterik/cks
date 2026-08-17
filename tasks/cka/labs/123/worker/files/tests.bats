@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 export KUBECONFIG=/home/ubuntu/.kube/config
-CTX="cluster1-admin@cluster1"
+CTX="--context cluster1-admin@cluster1"
 SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=15 k8s1_controlPlane_1"
 
 @test "0 Init" {
@@ -11,8 +11,8 @@ SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectT
 
 @test "1. CNI installed: all nodes (>=2) are Ready" {
   echo '1' >> /var/work/tests/result/all
-  total=$(kubectl get nodes --context $CTX --no-headers 2>/dev/null | wc -l)
-  ready=$(kubectl get nodes --context $CTX -o jsonpath='{.items[*].status.conditions[?(@.type=="Ready")].status}' 2>/dev/null | tr ' ' '\n' | grep -c "^True$")
+  total=$(kubectl get nodes $CTX --no-headers 2>/dev/null | wc -l)
+  ready=$(kubectl get nodes $CTX -o jsonpath='{.items[*].status.conditions[?(@.type=="Ready")].status}' 2>/dev/null | tr ' ' '\n' | grep -c "^True$")
   if [[ "$total" -ge 2 ]] && [[ "$ready" == "$total" ]]; then echo '1' >> /var/work/tests/result/ok; result=0
   else echo "nodes total=$total ready=$ready"; result=1; fi
   [ "$result" == "0" ]
@@ -20,7 +20,8 @@ SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectT
 
 @test "2. CoreDNS is healthy after CNI (readyReplicas >= 1)" {
   echo '1' >> /var/work/tests/result/all
-  ready=$(kubectl -n kube-system get deploy coredns --context $CTX -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
+  NS="-n kube-system"
+  ready=$(kubectl get deploy coredns $CTX $NS -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
   if [[ "$ready" -ge 1 ]] 2>/dev/null; then echo '1' >> /var/work/tests/result/ok; result=0
   else echo "coredns readyReplicas=$ready"; result=1; fi
   [ "$result" == "0" ]
@@ -28,8 +29,9 @@ SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectT
 
 @test "3. Cross-node pod networking: netprobe 2 pods Running on 2 distinct nodes" {
   echo '1' >> /var/work/tests/result/all
-  ready=$(kubectl -n netlab get deploy netprobe --context $CTX -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
-  nodes=$(kubectl -n netlab get pods -l app=netprobe --context $CTX -o jsonpath='{.items[*].spec.nodeName}' 2>/dev/null | tr ' ' '\n' | sort -u | grep -c .)
+  NS="-n netlab"
+  ready=$(kubectl get deploy netprobe $CTX $NS -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
+  nodes=$(kubectl get pods -l app=netprobe $CTX $NS -o jsonpath='{.items[*].spec.nodeName}' 2>/dev/null | tr ' ' '\n' | sort -u | grep -c .)
   if [[ "$ready" == "2" ]] && [[ "$nodes" == "2" ]]; then echo '1' >> /var/work/tests/result/ok; result=0
   else echo "netprobe readyReplicas=$ready distinctNodes=$nodes"; result=1; fi
   [ "$result" == "0" ]

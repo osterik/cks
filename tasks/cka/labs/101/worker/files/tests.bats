@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 export KUBECONFIG=/home/ubuntu/.kube/config
-CTX="cluster1-admin@cluster1"
+CTX="--context cluster1-admin@cluster1"
 
 @test "0 Init" {
   echo '' > /var/work/tests/result/all
@@ -10,7 +10,8 @@ CTX="cluster1-admin@cluster1"
 
 @test "1. Namespace ckad-101 exists" {
   echo '1' >> /var/work/tests/result/all
-  result=$(kubectl get ns ckad-101 --context $CTX -o jsonpath='{.metadata.name}' 2>/dev/null)
+  NS="-n default"
+  result=$(kubectl get ns ckad-101 $CTX $NS -o jsonpath='{.metadata.name}' 2>/dev/null)
   if [[ "$result" == "ckad-101" ]]; then
     echo '1' >> /var/work/tests/result/ok
   fi
@@ -19,8 +20,9 @@ CTX="cluster1-admin@cluster1"
 
 @test "2. Pod web (image viktoruj/ping_pong, label tier=frontend) in ckad-101" {
   echo '1' >> /var/work/tests/result/all
-  image=$(kubectl get po web -n ckad-101 --context $CTX -o jsonpath='{.spec.containers[0].image}' 2>/dev/null)
-  label=$(kubectl get po web -n ckad-101 --context $CTX -o jsonpath='{.metadata.labels.tier}' 2>/dev/null)
+  NS="-n ckad-101"
+  image=$(kubectl get po web $CTX $NS -o jsonpath='{.spec.containers[0].image}' 2>/dev/null)
+  label=$(kubectl get po web $CTX $NS -o jsonpath='{.metadata.labels.tier}' 2>/dev/null)
   if [[ "$image" == *ping_pong* ]] && [[ "$label" == "frontend" ]]; then
     echo '1' >> /var/work/tests/result/ok
     result=0
@@ -33,8 +35,9 @@ CTX="cluster1-admin@cluster1"
 
 @test "3. Deployment api in ckad-101 has 4 ready replicas (image viktoruj/ping_pong)" {
   echo '1' >> /var/work/tests/result/all
-  image=$(kubectl get deploy api -n ckad-101 --context $CTX -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null)
-  ready=$(kubectl get deploy api -n ckad-101 --context $CTX -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
+  NS="-n ckad-101"
+  image=$(kubectl get deploy api $CTX $NS -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null)
+  ready=$(kubectl get deploy api $CTX $NS -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
   if [[ "$image" == *ping_pong* ]] && [[ "$ready" == "4" ]]; then
     echo '1' >> /var/work/tests/result/ok
     result=0
@@ -47,8 +50,9 @@ CTX="cluster1-admin@cluster1"
 
 @test "4. Service api-svc (ClusterIP, port 80) selects deployment api pods" {
   echo '1' >> /var/work/tests/result/all
-  port=$(kubectl get svc api-svc -n ckad-101 --context $CTX -o jsonpath='{.spec.ports[0].port}' 2>/dev/null)
-  eps=$(kubectl get endpoints api-svc -n ckad-101 --context $CTX -o jsonpath='{.subsets[*].addresses[*].ip}' 2>/dev/null | wc -w)
+  NS="-n ckad-101"
+  port=$(kubectl get svc api-svc $CTX $NS -o jsonpath='{.spec.ports[0].port}' 2>/dev/null)
+  eps=$(kubectl get endpoints api-svc $CTX $NS -o jsonpath='{.subsets[*].addresses[*].ip}' 2>/dev/null | wc -w)
   if [[ "$port" == "80" ]] && [[ "$eps" -ge 1 ]]; then
     echo '1' >> /var/work/tests/result/ok
     result=0
@@ -61,9 +65,10 @@ CTX="cluster1-admin@cluster1"
 
 @test "5. Service web-np (NodePort 30101, port 80) in ckad-101" {
   echo '1' >> /var/work/tests/result/all
-  type=$(kubectl get svc web-np -n ckad-101 --context $CTX -o jsonpath='{.spec.type}' 2>/dev/null)
-  port=$(kubectl get svc web-np -n ckad-101 --context $CTX -o jsonpath='{.spec.ports[0].port}' 2>/dev/null)
-  nodePort=$(kubectl get svc web-np -n ckad-101 --context $CTX -o jsonpath='{.spec.ports[0].nodePort}' 2>/dev/null)
+  NS="-n ckad-101"
+  type=$(kubectl get svc web-np $CTX $NS -o jsonpath='{.spec.type}' 2>/dev/null)
+  port=$(kubectl get svc web-np $CTX $NS -o jsonpath='{.spec.ports[0].port}' 2>/dev/null)
+  nodePort=$(kubectl get svc web-np $CTX $NS -o jsonpath='{.spec.ports[0].nodePort}' 2>/dev/null)
   if [[ "$type" == "NodePort" ]] && [[ "$port" == "80" ]] && [[ "$nodePort" == "30101" ]]; then
     echo '1' >> /var/work/tests/result/ok
     result=0
