@@ -88,34 +88,10 @@ resource "aws_launch_template" "master" {
   name_prefix   = "${local.prefix}-${var.app_name}"
   image_id      = local.master_ami
   instance_type = var.k8s_master.instance_type
-  user_data = base64encode(templatefile("template/boot_zip.sh", {
-    boot_zip = base64gzip(templatefile(var.k8s_master.user_data_template, {
-      worker_join             = local.worker_join
-      k8s_config              = local.k8s_config
-      external_ip             = local.external_ip
-      k8_version              = var.k8s_master.k8_version
-      k8_version_sh           = var.k8s_master.k8_version
-      runtime                 = var.k8s_master.runtime
-      utils_enable            = var.k8s_master.utils_enable
-      pod_network_cidr        = var.k8s_master.pod_network_cidr
-      runtime_script          = file(var.k8s_master.runtime_script)
-      task_script_url         = startswith(var.k8s_master.task_script_url, "file:") ? "" : var.k8s_master.task_script_url
-      task_script_b64         = startswith(var.k8s_master.task_script_url, "file:") ? filebase64(trimprefix(var.k8s_master.task_script_url, "file:")) : ""
-      cni_type                = var.k8s_master.cni.type
-      calico_url              = var.k8s_master.cni.calico_url
-      cilium_version          = var.k8s_master.cni.cilium_version
-      cilium_helm_version     = var.k8s_master.cni.cilium_helm_version
-      disable_kube_proxy      = var.k8s_master.cni.disable_kube_proxy
-      ssh_private_key         = var.k8s_master.ssh.private_key
-      ssh_pub_key             = var.k8s_master.ssh.pub_key
-      ssh_password            = random_string.ssh.result
-      ssh_password_enable     = var.ssh_password_enable
-      kubeadm_init_extra_args = var.k8s_master.kubeadm_init_extra_args
-    }))
-
-  }))
-  key_name = var.k8s_master.key_name != "" ? var.k8s_master.key_name : null
-  tags     = local.tags_all_k8_master
+  user_data     = base64encode(local.master_user_data_raw)
+  depends_on    = [aws_s3_object.master_task_script]
+  key_name      = var.k8s_master.key_name != "" ? var.k8s_master.key_name : null
+  tags          = local.tags_all_k8_master
 
   network_interfaces {
     associate_public_ip_address = true

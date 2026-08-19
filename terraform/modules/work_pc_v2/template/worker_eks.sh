@@ -195,8 +195,10 @@ chmod +x /usr/bin/time_left
 # add additional script
 if [ -n "${task_script_b64}" ]; then
   echo "${task_script_b64}" | base64 --decode > /task.sh
+elif [ -n "${task_script_s3_uri}" ]; then
+  aws s3 cp "${task_script_s3_uri}" /task.sh
 else
-  curl "${task_script_url}" -o "/task.sh"
+  curl "${task_script_url}" -o /task.sh
 fi
 chmod +x  /task.sh
 /task.sh

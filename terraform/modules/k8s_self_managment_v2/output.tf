@@ -79,3 +79,42 @@ output "ssh_password_enable" {
 output "master" {
   value = var.k8s_master
 }
+
+output "master_user_data_size_bytes" {
+  description = "Raw master EC2 user_data size before Base64 encoding"
+  value       = length(local.master_user_data_raw)
+
+  precondition {
+    condition     = length(local.master_user_data_raw) <= local.user_data_limit_bytes
+    error_message = "Master EC2 user_data exceeds the 16384-byte limit after artifact selection."
+  }
+}
+
+output "master_task_script_delivery_method" {
+  description = "Selected master task script delivery method: user_data, s3, or url"
+  value = (
+    !local.master_task_script_is_local ? "url" :
+    local.master_upload_task_script_s3 ? "s3" : "user_data"
+  )
+}
+
+output "worker_user_data_size_bytes" {
+  description = "Raw worker EC2 user_data sizes before Base64 encoding"
+  value       = { for key, data in local.worker_user_data_raw : key => length(data) }
+
+  precondition {
+    condition = alltrue([
+      for data in values(local.worker_user_data_raw) : length(data) <= local.user_data_limit_bytes
+    ])
+    error_message = "At least one worker EC2 user_data value exceeds the 16384-byte limit after artifact selection."
+  }
+}
+
+output "worker_task_script_delivery_method" {
+  description = "Selected worker task script delivery methods"
+  value = {
+    for key, is_local in local.worker_task_script_is_local : key => (
+      !is_local ? "url" : local.worker_upload_task_script_s3[key] ? "s3" : "user_data"
+    )
+  }
+}

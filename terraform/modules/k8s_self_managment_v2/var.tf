@@ -37,19 +37,19 @@ variable "all_spot_subnet" {
 }
 variable "k8s_master" {
   type = object({
-    instance_type      = string
-    ami_id             = string
-    ubuntu_version     = string
-    key_name           = string
-    cidrs              = list(string)
-    subnet_number      = string
-    user_data_template = string
-    k8_version         = string
-    runtime            = string
-    runtime_script     = string
-    utils_enable       = string
-    pod_network_cidr   = string
-    kubeadm_init_extra_args= optional(string, "")
+    instance_type           = string
+    ami_id                  = string
+    ubuntu_version          = string
+    key_name                = string
+    cidrs                   = list(string)
+    subnet_number           = string
+    user_data_template      = string
+    k8_version              = string
+    runtime                 = string
+    runtime_script          = string
+    utils_enable            = string
+    pod_network_cidr        = string
+    kubeadm_init_extra_args = optional(string, "")
     cni = optional(object({
       type                = optional(string, "calico") # calico, cilium
       calico_url          = optional(string, "https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml")

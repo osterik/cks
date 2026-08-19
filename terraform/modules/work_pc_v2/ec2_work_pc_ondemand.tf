@@ -17,7 +17,7 @@ resource "aws_instance" "master" {
     ]
   }
   user_data_base64 = base64encode(local.user_data_raw)
-  depends_on       = [aws_s3_object.tests]
+  depends_on       = [aws_s3_object.tests, aws_s3_object.task_script]
 
   tags = local.tags_all
   root_block_device {

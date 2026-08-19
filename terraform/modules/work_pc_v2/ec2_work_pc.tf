@@ -90,7 +90,7 @@ resource "aws_launch_template" "master" {
 
 
   user_data  = base64encode(local.user_data_raw)
-  depends_on = [aws_s3_object.tests]
+  depends_on = [aws_s3_object.tests, aws_s3_object.task_script]
   key_name   = var.work_pc.key_name != "" ? var.work_pc.key_name : null
   tags       = local.tags_all_k8_master
 

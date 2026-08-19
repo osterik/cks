@@ -112,12 +112,17 @@ output "user_data_size_bytes" {
   }
 }
 
-output "user_data_with_tests_inline_size_bytes" {
-  description = "Calculated raw EC2 user_data size when tests.bats is embedded"
-  value       = length(local.user_data_with_tests_inline_sizing_raw)
+output "user_data_all_artifacts_inline_size_bytes" {
+  description = "Calculated raw EC2 user_data size when all local artifacts are embedded"
+  value       = length(local.user_data_both_inline_sizing_raw)
 }
 
 output "tests_delivery_method" {
   description = "Selected tests.bats delivery method: user_data, s3, or url"
   value       = local.tests_delivery_method
+}
+
+output "task_script_delivery_method" {
+  description = "Selected task script delivery method: user_data, s3, or url"
+  value       = local.task_script_delivery_method
 }
