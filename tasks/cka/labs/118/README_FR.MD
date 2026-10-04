@@ -106,8 +106,8 @@ check_result    # vérifier la solution
 ---
 |        **2**        | **Réparer CoreDNS**                                         |
 | :-----------------: | :----------------------------------------------------------- |
-| Ce que nous faisons | Le DNS du cluster ne fonctionne pas : le Deployment `coredns` dans `kube-system` a ses répliques mises à zéro (0). Nous le restaurons — `kubectl -n kube-system scale deployment coredns --replicas=2` — et attendons le `rollout status`. La résolution peut être vérifiée avec un Pod temporaire exécutant `nslookup kubernetes.default`. |
-| Critères d'acceptation | - Deployment `coredns` dans `kube-system` : `readyReplicas ≥ 1`. |
+| Ce que nous faisons | La résolution DNS dans le cluster ne fonctionne pas : les Pods ne peuvent pas résoudre le Service `kubernetes.default`. Rétablissez le fonctionnement du DNS du cluster. |
+| Critères d'acceptation | - Depuis un Pod du cluster, `nslookup kubernetes.default` s'exécute correctement et renvoie une adresse. |
 ---
 |        **3**        | **Informations sur le réseau du cluster**                    |
 | :-----------------: | :----------------------------------------------------------- |

@@ -103,8 +103,8 @@ check_result    # check your solution
 ---
 |        **2**        | **Fix CoreDNS**                                             |
 | :-----------------: | :----------------------------------------------------------- |
-| What to do          | DNS in the cluster is broken: the `coredns` Deployment in `kube-system` has its replicas zeroed out (0). Restore it — `kubectl -n kube-system scale deployment coredns --replicas=2` and wait for `rollout status`. You can verify resolution with a temporary Pod running `nslookup kubernetes.default`. |
-| Acceptance criteria | - Deployment `coredns` in `kube-system`: `readyReplicas ≥ 1`. |
+| What to do          | DNS resolution in the cluster is broken: Pods cannot resolve the `kubernetes.default` Service. Restore cluster DNS functionality. |
+| Acceptance criteria | - From a Pod in the cluster, `nslookup kubernetes.default` completes successfully and returns an address. |
 ---
 |        **3**        | **Cluster network facts**                                    |
 | :-----------------: | :----------------------------------------------------------- |

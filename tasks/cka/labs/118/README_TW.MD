@@ -103,8 +103,8 @@ check_result    # 檢查解答
 ---
 |        **2**        | **修復 CoreDNS**                                            |
 | :-----------------: | :----------------------------------------------------------- |
-| 要做什麼            | 叢集中的 DNS 無法運作:`kube-system` 裡的 Deployment `coredns` 副本數被歸零(0)。把它復原 - `kubectl -n kube-system scale deployment coredns --replicas=2`,並等待 `rollout status`。可以用一個臨時 Pod 執行 `nslookup kubernetes.default` 來驗證解析。 |
-| 驗收標準            | - `kube-system` 中的 Deployment `coredns`:`readyReplicas ≥ 1`。 |
+| 要做什麼            | 叢集中的 DNS 解析已失效：Pod 無法解析 Service `kubernetes.default`。請恢復叢集 DNS 功能。 |
+| 驗收標準            | - 從叢集中的 Pod 執行 `nslookup kubernetes.default` 可成功完成並傳回位址。 |
 ---
 |        **3**        | **叢集網路相關事實**                                          |
 | :-----------------: | :----------------------------------------------------------- |

@@ -21,13 +21,15 @@ SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectT
   [ "$result" == "0" ]
 }
 
-@test "2. CoreDNS restored (readyReplicas >= 1)" {
+@test "2. Cluster DNS resolves kubernetes.default from a Pod" {
   echo '1' >> /var/work/tests/result/all
-  NS="-n kube-system"
-  ready=$(kubectl get deploy coredns $CTX $NS -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
-  if [[ "$ready" -ge 1 ]] 2>/dev/null; then
+  NS="-n dns-lab"
+  expected_ip=$(kubectl get service kubernetes $CTX -n default -o jsonpath='{.spec.clusterIP}' 2>/dev/null)
+  lookup=$(kubectl exec dns-test $CTX $NS -- nslookup kubernetes.default 2>&1)
+  lookup_status=$?
+  if [[ "$lookup_status" -eq 0 ]] && [[ -n "$expected_ip" ]] && grep -Fq "$expected_ip" <<< "$lookup"; then
     echo '1' >> /var/work/tests/result/ok; result=0
-  else echo "coredns readyReplicas=$ready"; result=1; fi
+  else echo "nslookup kubernetes.default from dns-test failed (exit=$lookup_status, expected address=$expected_ip): $lookup"; result=1; fi
   [ "$result" == "0" ]
 }
 

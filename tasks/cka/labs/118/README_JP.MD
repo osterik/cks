@@ -103,8 +103,8 @@ check_result    # 解答をチェックする
 ---
 |        **2**        | **CoreDNS を修復する**                                      |
 | :-----------------: | :----------------------------------------------------------- |
-| やること            | クラスタの DNS が動いていません：`kube-system` の Deployment `coredns` はレプリカがゼロ（0）にされています。復旧してください - `kubectl -n kube-system scale deployment coredns --replicas=2` を実行し、`rollout status` を待ちます。名前解決は `nslookup kubernetes.default` を実行する一時的な Pod で確認できます。 |
-| 受け入れ基準        | - `kube-system` の Deployment `coredns`：`readyReplicas ≥ 1`。 |
+| やること            | クラスター内の DNS 名前解決が機能していません。Pod から Service `kubernetes.default` を名前解決できません。クラスター DNS の機能を復旧してください。 |
+| 受け入れ基準        | - クラスター内の Pod から `nslookup kubernetes.default` が正常に完了し、アドレスが返されること。 |
 ---
 |        **3**        | **クラスタネットワークに関する事実**                          |
 | :-----------------: | :----------------------------------------------------------- |
